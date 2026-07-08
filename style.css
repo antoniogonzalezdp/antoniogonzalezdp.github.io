@@ -331,6 +331,26 @@ footer a:hover { color: var(--petrol); }
 .result-block.panels-2 figure { max-width: 480px; }
 .result-block.panels-6 figure { max-width: 720px; }
 
+.result-block.fig-diagram figure { max-width: 460px; }
+.result-block.fig-forest figure { max-width: 640px; }
+
+.code-status {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  border: 1px dashed var(--line);
+  border-radius: 20px;
+  padding: 5px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.code-status .dot-pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--amber);
+  display: inline-block;
+}
+
 .result-block .result-title {
   font-family: var(--display);
   font-size: 20px;

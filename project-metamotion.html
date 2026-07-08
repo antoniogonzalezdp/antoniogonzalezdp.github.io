@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From 936 Papers to One Number — Antonio González</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">antonio<b>·</b>gonzalez</a>
+  <div class="nav-links">
+    <a href="index.html#projects">Projects</a>
+    <a href="index.html#about">About</a>
+    <a href="mailto:antoniogdelpozo@gmail.com">Contact</a>
+  </div>
+</nav>
+
+<section class="detail-hero">
+  <a href="index.html#projects" class="back-link">← All projects</a>
+  <h1>From 936 Papers to One Number: A Systematic Review &amp; Meta-Analysis Pipeline</h1>
+
+  <div class="meta-row">
+    <span class="pill">R</span>
+    <span class="pill">meta / metafor</span>
+    <span class="pill">PRISMA 2020</span>
+    <span class="pill">Effect size synthesis</span>
+    <span class="pill">In preparation</span>
+  </div>
+
+  <div class="link-row">
+    <a href="https://www.crd.york.ac.uk/PROSPERO/view/CRD420251074884" target="_blank">📋 View the official preregistration (PROSPERO)</a>
+    <span class="code-status"><span class="dot-pulse"></span> Code in progress — repository not public yet</span>
+  </div>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-1"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">Problem</div>
+  <h2>Does schizophrenia actually impair motion perception — and by how much?</h2>
+  <p>Motion perception deficits are one of the most frequently reported perceptual abnormalities in schizophrenia, but the evidence has never been formally synthesized: the only prior review dates back to 1999, and no meta-analysis exists. This project systematically collects every relevant study published since then, standardizes results measured with completely different methods and metrics, and combines them into a single, statistically defensible estimate of the deficit — while also testing whether factors like medication or illness stage change its size.</p>
+  <p>The review is preregistered on PROSPERO, with a fixed protocol defined before any data was analyzed — the standard practice for transparent, bias-resistant research.</p>
+</section>
+
+<section class="detail-section">
+  <div class="section-label">Method</div>
+  <h2>Screening, extraction, and standardization across a large, messy literature</h2>
+  <p>My co-authors and I screened 936 records from PubMed and Google Scholar down to a final set of studies through a structured, reproducible process, following PRISMA 2020 reporting standards.</p>
+
+  <div class="result-block fig-diagram" style="margin-top:24px;">
+    <figure><img src="images/prisma_flow_diagram.png" alt="PRISMA 2020 flow diagram showing the study screening and selection process"></figure>
+  </div>
+
+  <p style="margin-top:32px;">Once studies are selected, each one goes through a standardized extraction and transformation pipeline before it can be statistically combined with the others:</p>
+
+  <div class="pipeline">
+    <div class="step">Data extraction<br><span style="font-weight:400;color:var(--ink-soft);">(2 independent raters)</span></div><div class="arrow">→</div>
+    <div class="step">Standardizing units<br><span style="font-weight:400;color:var(--ink-soft);">(thresholds, d', % accuracy)</span></div><div class="arrow">→</div>
+    <div class="step">Computing effect sizes<br><span style="font-weight:400;color:var(--ink-soft);">(Hedges' g)</span></div><div class="arrow">→</div>
+    <div class="step">Random-effects synthesis<br><span style="font-weight:400;color:var(--ink-soft);">(meta / metafor)</span></div>
+  </div>
+
+  <p style="margin-top:32px;">The hardest technical challenge here isn't the statistics — it's the data engineering: each study reports its results differently (raw trial data, means and SDs, or only summary statistics), using different outcome scales entirely. The R pipeline I'm building detects what each study provides and converts it into one common, comparable effect size, so 40+ independent studies can speak the same statistical language.</p>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-2"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">Results <span style="font-weight:400;color:var(--ink-soft);font-family:var(--mono);font-size:13px;">— preliminary</span></div>
+
+  <div class="result-block fig-forest">
+    <figure><img src="images/forest_plot_provisional.png" alt="Provisional forest plot showing effect sizes across included studies with a pooled random-effects estimate"></figure>
+    <div class="result-title">A single pooled estimate, built from every included study</div>
+    <p>Each row is one study's effect size with its confidence interval; the diamond at the bottom is the overall pooled estimate from the random-effects model. This is a preliminary run on the studies processed so far — the final analysis will include the complete set, plus moderator tests (medication status, illness stage, attentional lapses) currently being built.</p>
+  </div>
+</section>
+
+<div class="impact-box">
+  <h2>Why this matters beyond the lab</h2>
+  <p>This project is fundamentally a data consolidation problem: pulling structured signal out of dozens of independent, inconsistently-reported sources and merging them into one clean, analyzable dataset. That same skill — reconciling heterogeneous data into a single trustworthy pipeline — is exactly what's needed when combining data from multiple systems, vendors, or reports in any analytics role.</p>
+</div>
+
+<footer>
+  <span>Barcelona, Spain</span>
+  <span>
+    <a href="mailto:antoniogdelpozo@gmail.com">antoniogdelpozo@gmail.com</a> ·
+    <a href="https://www.linkedin.com/in/antonio-gonzález-del-pozo-27b938291" target="_blank">LinkedIn</a> ·
+    <a href="https://github.com/" target="_blank">GitHub</a>
+  </span>
+</footer>
+
+<script>
+function drawThreshold(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const w = 900, h = 64;
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+
+  const dash = document.createElementNS(svgNS, "line");
+  dash.setAttribute("x1", 0); dash.setAttribute("y1", h/2);
+  dash.setAttribute("x2", w); dash.setAttribute("y2", h/2);
+  dash.setAttribute("class", "dash");
+  svg.appendChild(dash);
+
+  let d = `M 0 ${h-6}`;
+  const n = 60;
+  for (let i = 0; i <= n; i++) {
+    const x = (i/n) * w;
+    const t = (i/n - 0.5) * 10;
+    const y = h - 6 - (h - 12) / (1 + Math.exp(-t));
+    d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  const path = document.createElementNS(svgNS, "path");
+  path.setAttribute("d", d);
+  path.setAttribute("class", "curve");
+  svg.appendChild(path);
+
+  const dot = document.createElementNS(svgNS, "circle");
+  dot.setAttribute("cx", w/2); dot.setAttribute("cy", h/2);
+  dot.setAttribute("r", 5);
+  dot.setAttribute("class", "dot");
+  svg.appendChild(dot);
+
+  el.appendChild(svg);
+}
+drawThreshold("threshold-1");
+drawThreshold("threshold-2");
+</script>
+
+</body>
+</html>
