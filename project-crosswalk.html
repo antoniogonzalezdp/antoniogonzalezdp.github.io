@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting Street-Crossing Decisions in VR — Antonio González</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">antonio<b>·</b>gonzalez</a>
+  <div class="nav-links">
+    <a href="index.html#projects">Projects</a>
+    <a href="index.html#about">About</a>
+    <a href="mailto:antoniogdelpozo@gmail.com">Contact</a>
+  </div>
+</nav>
+
+<section class="detail-hero">
+  <a href="index.html#projects" class="back-link">← All projects</a>
+  <h1>Predicting Human Decisions Under Uncertainty: A VR Behavioral Study</h1>
+
+  <div class="meta-row">
+    <span class="pill">R</span>
+    <span class="pill">Mixed-effects models</span>
+    <span class="pill">Eye-tracking</span>
+    <span class="pill">3D geometry</span>
+    <span class="pill">Virtual Reality</span>
+  </div>
+
+  <div class="link-row">
+    <a href="https://www.nature.com/articles/s44271-026-00448-1" target="_blank">📄 Read the published paper (Communications Psychology, 2026)</a>
+    <a href="#" target="_blank">💻 View the code on GitHub</a>
+  </div>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-1"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">Problem</div>
+  <h2>Does an unpredictable environment change whether people act, how confident they feel, and how they move?</h2>
+  <p>Imagine deciding whether to cross a street as cars approach: some evenly spaced and predictable, others erratic and unevenly spaced. Does that added unpredictability — even when it doesn't change your actual odds of making it across safely — change your decision? Your confidence? The way you physically move once you commit?</p>
+  <p>This project simulated exactly that scenario in immersive virtual reality with 44 participants, recording their decisions, confidence judgments, movement, and eye gaze at 90Hz, to find out whether environmental variability shapes behavior even when it's technically irrelevant to success.</p>
+</section>
+
+<section class="detail-section">
+  <div class="section-label">Method</div>
+  <h2>An end-to-end pipeline: from raw VR sensor streams to published statistical models</h2>
+  <p><strong>Data collection:</strong> 44 participants completed a VR street-crossing task, with head position, gaze direction, and decisions recorded at 90Hz. I took part in data collection alongside the research team, and co-developed the full analysis pipeline in R together with another co-author of the paper — from data ingestion through modeling to final visualization.</p>
+
+  <div class="pipeline">
+    <div class="step">Raw sensor data</div><div class="arrow">→</div>
+    <div class="step">Cleaning &amp; feature engineering</div><div class="arrow">→</div>
+    <div class="step">Statistical modeling</div><div class="arrow">→</div>
+    <div class="step">Visualization</div>
+  </div>
+
+  <ul style="margin-top:28px;">
+    <li><strong>Mixed-effects models</strong> (GLMM/LMM) to handle repeated-measures data across trials and participants.</li>
+    <li><strong>Custom 3D raycasting algorithm</strong> to reconstruct visual attention from gaze and head-position vectors — determining, frame by frame, which object in the 3D scene a participant was looking at.</li>
+    <li><strong>Psychometric curve fitting</strong> to extract individual behavioral thresholds from binary decision data.</li>
+    <li><strong>Reusable function library</strong> for statistical summaries (confidence intervals, effect sizes) and consistent plotting.</li>
+  </ul>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-2"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">Results</div>
+
+  <div class="result-block panels-6">
+    <figure><img src="images/psychometric_curves.jpeg" alt="Psychometric curves showing confidence and crossing attempts as a function of time-to-contact and car velocity variability"></figure>
+    <div class="result-title">Confidence and decisions both dropped as scene variability increased</div>
+    <p>As the time available to cross shrank, participants became less confident and less likely to attempt crossing — and this threshold shifted further right as the variability of the approaching cars increased, meaning people needed more time margin to feel safe in more unpredictable scenes.</p>
+  </div>
+
+  <div class="result-pair">
+    <div class="result-block panels-1">
+      <figure><img src="images/movement_initiation.png" alt="Sidewalk leaving time as a function of car velocity variability"></figure>
+      <div class="result-title">Higher variability delayed the decision to act</div>
+      <p>Participants took longer to leave the sidewalk in high-variability trials, showing that environmental unpredictability doesn't just lower confidence — it measurably slows down the moment of committing to an action.</p>
+    </div>
+
+    <div class="result-block panels-1">
+      <figure><img src="images/peak_velocity.png" alt="Peak movement velocity as a function of car velocity variability"></figure>
+      <div class="result-title">But once they moved, they moved faster</div>
+      <p>Despite starting later, participants in high-variability trials reached higher peak speeds — a compensatory strategy that kept their success rate high despite the added uncertainty.</p>
+    </div>
+  </div>
+
+  <div class="result-block panels-1">
+    <figure><img src="images/gaze_attention.png" alt="Proportion of trial time spent looking at cars, split by confidence judgment"></figure>
+    <div class="result-title">Higher-confidence trials showed a distinct visual scanning pattern</div>
+    <p>Using 3D gaze-ray tracking, we found that participants who ended up feeling more confident spent proportionally less time visually fixated on the cars — consistent with faster, more efficient information processing before deciding.</p>
+  </div>
+
+  <div class="result-block panels-2">
+    <figure><img src="images/success_rate.jpeg" alt="Proportion of successful crossings as a function of time-to-contact and car velocity variability"></figure>
+    <div class="result-title">Despite all this, task performance stayed remarkably stable</div>
+    <p>Crossing success remained above 90% regardless of variability level — evidence that participants' behavioral adjustments (slower starts, faster movement) successfully offset the added environmental complexity.</p>
+  </div>
+
+</section>
+
+<div class="impact-box">
+  <h2>Why this matters beyond the lab</h2>
+  <p>This pipeline — combining multi-modal sensor data, statistical modeling, and clear visualization to explain <em>why</em> people make the decisions they do — transfers directly to product analytics, UX research, and any domain where understanding behavior from complex, noisy, real-world data matters.</p>
+</div>
+
+<footer>
+  <span>Barcelona, Spain</span>
+  <span>
+    <a href="mailto:antoniogdelpozo@gmail.com">antoniogdelpozo@gmail.com</a> ·
+    <a href="https://www.linkedin.com/in/antonio-gonzález-del-pozo-27b938291" target="_blank">LinkedIn</a> ·
+    <a href="https://github.com/" target="_blank">GitHub</a>
+  </span>
+</footer>
+
+<script>
+function drawThreshold(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const w = 900, h = 64;
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+
+  const dash = document.createElementNS(svgNS, "line");
+  dash.setAttribute("x1", 0); dash.setAttribute("y1", h/2);
+  dash.setAttribute("x2", w); dash.setAttribute("y2", h/2);
+  dash.setAttribute("class", "dash");
+  svg.appendChild(dash);
+
+  let d = `M 0 ${h-6}`;
+  const n = 60;
+  for (let i = 0; i <= n; i++) {
+    const x = (i/n) * w;
+    const t = (i/n - 0.5) * 10;
+    const y = h - 6 - (h - 12) / (1 + Math.exp(-t));
+    d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  const path = document.createElementNS(svgNS, "path");
+  path.setAttribute("d", d);
+  path.setAttribute("class", "curve");
+  svg.appendChild(path);
+
+  const dot = document.createElementNS(svgNS, "circle");
+  dot.setAttribute("cx", w/2); dot.setAttribute("cy", h/2);
+  dot.setAttribute("r", 5);
+  dot.setAttribute("class", "dot");
+  svg.appendChild(dot);
+
+  el.appendChild(svg);
+}
+drawThreshold("threshold-1");
+drawThreshold("threshold-2");
+</script>
+
+</body>
+</html>

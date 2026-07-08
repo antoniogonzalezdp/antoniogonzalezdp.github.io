@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antonio González — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">antonio<b>·</b>gonzalez</a>
+  <div class="nav-links">
+    <a href="#projects">Projects</a>
+    <a href="#about">About</a>
+    <a href="mailto:antoniogdelpozo@gmail.com">Contact</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-eyebrow">Data Analyst / Data Scientist — Junior</div>
+  <h1>Understanding <em>why</em> people decide<br>what they decide.</h1>
+  <p class="lede">I build data pipelines and statistical models that turn messy, real-world behavioral data into clear, defensible answers — trained in research, built for product and tech environments.</p>
+</header>
+
+<div class="wrap">
+  <div class="threshold" id="threshold-hero"></div>
+</div>
+
+<section class="projects" id="projects">
+  <div class="section-label">Selected work</div>
+  <div class="project-grid">
+
+    <a href="project-crosswalk.html" class="card">
+      <div class="card-tag">Published research · R</div>
+      <h3>Predicting street-crossing decisions in VR</h3>
+      <p>A full analysis pipeline — from raw VR sensor data to published statistical models — explaining how uncertainty shapes human decisions, confidence, and motor behavior.</p>
+      <div class="card-stack">R · Mixed-effects models · 3D gaze tracking · quickpsy</div>
+    </a>
+
+    <div class="card disabled">
+      <div class="card-tag">Coming soon</div>
+      <h3>Meta-analysis automation pipeline</h3>
+      <p>An automated pipeline for extracting, standardizing and synthesizing effect sizes across dozens of independent studies.</p>
+      <div class="card-stack">R · Data extraction · Effect size modeling</div>
+    </div>
+
+    <div class="card disabled">
+      <div class="card-tag">Coming soon</div>
+      <h3>Statistical modeling toolkit</h3>
+      <p>A consolidated set of regression approaches — linear, logistic, mixed-effects — applied to a single coherent dataset.</p>
+      <div class="card-stack">R · GLM · Mixed models</div>
+    </div>
+
+    <div class="card disabled">
+      <div class="card-tag">Coming soon</div>
+      <h3>Customer analytics case study</h3>
+      <p>A business-flavored project: SQL + dashboarding applied to a churn/forecasting scenario.</p>
+      <div class="card-stack">SQL · Dashboards · Forecasting</div>
+    </div>
+
+  </div>
+</section>
+
+<section class="detail-section" id="about">
+  <div class="section-label">About</div>
+  <p>I'm a researcher-turned-data-professional with a background in behavioral science, statistics, and machine learning. Over three years at the University of Barcelona's Vision and Control of Action Lab, I designed end-to-end R/Python pipelines, built predictive and mixed-effects models, and co-authored a peer-reviewed publication analyzing human decision-making under uncertainty. I'm now applying that same rigor — asking sharp questions of data and backing every claim with a model — to product, analytics, and applied ML problems.</p>
+</section>
+
+<footer>
+  <span>Barcelona, Spain</span>
+  <span>
+    <a href="mailto:antoniogdelpozo@gmail.com">antoniogdelpozo@gmail.com</a> ·
+    <a href="https://www.linkedin.com/in/antonio-gonzález-del-pozo-27b938291" target="_blank">LinkedIn</a> ·
+    <a href="https://github.com/" target="_blank">GitHub</a>
+  </span>
+</footer>
+
+<script>
+// Signature "threshold line" — a curve crossing a dashed threshold, echoing
+// the psychometric threshold plots from the Crosswalk project.
+function drawThreshold(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const w = 900, h = 64;
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+
+  const dash = document.createElementNS(svgNS, "line");
+  dash.setAttribute("x1", 0); dash.setAttribute("y1", h/2);
+  dash.setAttribute("x2", w); dash.setAttribute("y2", h/2);
+  dash.setAttribute("class", "dash");
+  svg.appendChild(dash);
+
+  // sigmoid-like path
+  let d = `M 0 ${h-6}`;
+  const n = 60;
+  for (let i = 0; i <= n; i++) {
+    const x = (i/n) * w;
+    const t = (i/n - 0.5) * 10;
+    const y = h - 6 - (h - 12) / (1 + Math.exp(-t));
+    d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  const path = document.createElementNS(svgNS, "path");
+  path.setAttribute("d", d);
+  path.setAttribute("class", "curve");
+  svg.appendChild(path);
+
+  const dot = document.createElementNS(svgNS, "circle");
+  dot.setAttribute("cx", w/2); dot.setAttribute("cy", h/2);
+  dot.setAttribute("r", 5);
+  dot.setAttribute("class", "dot");
+  svg.appendChild(dot);
+
+  el.appendChild(svg);
+}
+drawThreshold("threshold-hero");
+</script>
+
+</body>
+</html>
