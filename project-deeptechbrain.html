@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three Ways to Teach a Machine to See Patterns — Antonio González</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">antonio<b>·</b>gonzalez</a>
+  <div class="nav-links">
+    <a href="index.html#projects">Projects</a>
+    <a href="index.html#about">About</a>
+    <a href="mailto:antoniogdelpozo@gmail.com">Contact</a>
+  </div>
+</nav>
+
+<section class="detail-hero">
+  <a href="index.html#projects" class="back-link">← All projects</a>
+  <h1>Three Ways to Teach a Machine to See Patterns</h1>
+
+  <div class="meta-row">
+    <span class="pill">Python</span>
+    <span class="pill">scikit-learn</span>
+    <span class="pill">TensorFlow / Keras</span>
+    <span class="pill">Classical ML</span>
+    <span class="pill">Deep Learning</span>
+  </div>
+
+  <div class="link-row">
+    <a href="https://github.com/antoniogonzalezdp/antoniogonzalezdp.github.io/tree/main/code_analysis/deep-tech-brain" target="_blank">💻 View the notebooks on GitHub</a>
+  </div>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-1"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">Problem</div>
+  <h2>Applying the right tool to the right kind of pattern</h2>
+  <p>Not every prediction problem calls for the same algorithm. Sometimes the priority is a model you can fully explain to a stakeholder; sometimes there's no label at all and the goal is to discover structure on your own; sometimes the pattern is too complex for anything but a neural network. This project is a set of three applied exercises, each deliberately built around a different family of machine learning technique, to practice recognizing which tool fits which problem — and to be honest about each one's limitations.</p>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-2"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">1. Interpretable models &amp; the cost of imbalance</div>
+  <h2>Decision Tree vs. Random Forest on stroke risk data</h2>
+  <p>A single decision tree is easy to read but prone to overfitting; a Random Forest trades some of that interpretability for stability, by averaging many trees together. I trained both on a clinical dataset to predict stroke risk from variables like age, glucose level, and smoking status, then evaluated whether the ensemble actually generalized better using out-of-bag (OOB) scoring — a built-in cross-validation technique for Random Forests.</p>
+
+  <div class="result-block fig-wide">
+    <figure><img src="images/decision_tree.png" alt="Decision tree showing splits on age, glucose level, smoking status and heart disease to predict stroke risk"></figure>
+    <div class="result-title">A fully transparent decision path</div>
+    <p>Every split is traceable: the model's very first decision is a simple age threshold, which alone accounts for most of its predictive power — the kind of transparency a black-box model can't offer a clinician or a stakeholder.</p>
+  </div>
+
+  <div class="code-label">Evaluating generalization without a separate validation set</div>
+  <div class="code-block">rf_model = RandomForestClassifier(
+    n_estimators=100, oob_score=True, random_state=42, bootstrap=True
+)
+rf_model.fit(X, y)
+<span class="cm"># OOB score: accuracy estimated on samples each tree never saw during training</span>
+print("OOB Score:", rf_model.oob_score_)</div>
+
+  <div class="result-block fig-med" style="margin-top:32px;">
+    <figure><img src="images/rf_confusion_matrix.png" alt="Confusion matrix for the Random Forest model showing high overall accuracy but almost no correct predictions for the minority stroke class"></figure>
+    <div class="result-title">The honest result: high accuracy, but a misleading one</div>
+    <p>Both models scored well above 95% accuracy — but almost entirely by predicting "no stroke" for everyone, since stroke cases made up a small fraction of the data. This is the real lesson of the exercise: with imbalanced classes, accuracy alone can hide a model that has learned nothing useful about the minority class.</p>
+  </div>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-3"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">2. Supervised vs. unsupervised, same dataset</div>
+  <h2>Classifying and clustering Alzheimer's biomarker data</h2>
+  <p>Using the same clinical biomarker dataset (cognitive and biological measures used in Alzheimer's research), I approached it two different ways: first with a supervised classifier trained on known diagnostic labels, then — ignoring those labels entirely — with an unsupervised method to see whether the same underlying structure would emerge on its own.</p>
+
+  <div class="result-pair" style="align-items:flex-start;">
+    <div class="result-block fig-align">
+      <figure><img src="images/svm_heatmap.png" alt="Heatmap of SVM cross-validation accuracy across different kernels and regularization strengths"></figure>
+      <div class="result-title">Tuning an SVM systematically</div>
+      <p>A grid search across kernel type and regularization strength (C) shows the linear and RBF kernels both comfortably outperforming polynomial — and reveals exactly which hyperparameter combination generalizes best, rather than guessing.</p>
+    </div>
+
+    <div class="result-block fig-align">
+      <figure><img src="images/kmeans_clusters.png" alt="K-Means clustering result on the biomarker dataset projected onto two principal components"></figure>
+      <div class="result-title">The same structure, found without labels</div>
+      <p>Running K-Means on the same features (with the optimal number of clusters selected via the elbow method) recovers a very similar two-group split — evidence that the diagnostic groups aren't an artifact of the labels, but reflect real structure in the underlying data.</p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-4"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">3. Deep learning for pixel-level prediction</div>
+  <h2>A U-Net for brain tumor segmentation on MRI scans</h2>
+  <p>Classification tells you <em>whether</em> something is present; segmentation tells you exactly <em>where</em>. I built and trained a U-Net — a convolutional neural network architecture designed specifically for this — in Keras, to identify tumor regions in brain MRI scans at the pixel level.</p>
+
+  <div class="code-label">The core U-Net architecture: downsampling, then symmetric upsampling with skip connections</div>
+  <div class="code-block">def unet_model(input_size=(128,128,1)):
+    inputs = layers.Input(input_size)
+
+    <span class="cm"># Encoder: extract features, shrink spatial resolution</span>
+    c1 = layers.Conv2D(16,3,activation='relu',padding='same')(inputs)
+    c1 = layers.Conv2D(16,3,activation='relu',padding='same')(c1)
+    p1 = layers.MaxPooling2D()(c1)
+
+    c2 = layers.Conv2D(32,3,activation='relu',padding='same')(p1)
+    c2 = layers.Conv2D(32,3,activation='relu',padding='same')(c2)
+    p2 = layers.MaxPooling2D()(c2)
+
+    b = layers.Conv2D(64,3,activation='relu',padding='same')(p2)
+    b = layers.Conv2D(64,3,activation='relu',padding='same')(b)
+
+    <span class="cm"># Decoder: upsample back up, reusing encoder features via skip connections</span>
+    u1 = layers.UpSampling2D()(b)
+    u1 = layers.concatenate([u1, c2])
+    c3 = layers.Conv2D(32,3,activation='relu',padding='same')(u1)
+    c3 = layers.Conv2D(32,3,activation='relu',padding='same')(c3)
+
+    u2 = layers.UpSampling2D()(c3)
+    u2 = layers.concatenate([u2, c1])
+    c4 = layers.Conv2D(16,3,activation='relu',padding='same')(u2)
+    c4 = layers.Conv2D(16,3,activation='relu',padding='same')(c4)
+
+    outputs = layers.Conv2D(1,1,activation='sigmoid')(c4)
+    return models.Model(inputs, outputs)</div>
+
+  <div class="result-block fig-wide" style="margin-top:32px;">
+    <figure><img src="images/unet_segmentation.png" alt="MRI input scan, ground truth tumor mask, and the model's predicted segmentation, with a Dice score of 0.839"></figure>
+    <div class="result-title">Pixel-accurate predictions, benchmarked with the Dice score</div>
+    <p>Comparing the model's predicted mask (right) against the ground truth (center) gives a Dice score of 0.84 on this sample — a standard metric for segmentation overlap, where 1.0 would be a perfect pixel-for-pixel match.</p>
+  </div>
+
+  <div class="result-block fig-wide">
+    <figure><img src="images/unet_learning_curves.png" alt="Training and validation loss and accuracy curves across training epochs"></figure>
+    <div class="result-title">Watching the model learn, epoch by epoch</div>
+    <p>Tracking training and validation metrics together makes it possible to catch overfitting early — here, both curves move together throughout training, showing the model was generalizing rather than memorizing.</p>
+  </div>
+</section>
+
+<div class="impact-box">
+  <h2>Why this matters beyond the lab</h2>
+  <p>Knowing multiple modeling approaches isn't about collecting techniques — it's about correctly diagnosing which one a problem actually needs, and being able to say honestly when a model isn't good enough yet. That judgment — interpretable vs. black-box, supervised vs. unsupervised, classical ML vs. deep learning — is exactly what separates someone who can run <code>.fit()</code> from someone who can be trusted to choose the right approach for a real product or business problem.</p>
+</div>
+
+<footer>
+  <span>Barcelona, Spain</span>
+  <span>
+    <a href="mailto:antoniogdelpozo@gmail.com">antoniogdelpozo@gmail.com</a> ·
+    <a href="https://www.linkedin.com/in/antonio-gonzález-del-pozo-27b938291" target="_blank">LinkedIn</a> ·
+    <a href="https://github.com/" target="_blank">GitHub</a>
+  </span>
+</footer>
+
+<script>
+function drawThreshold(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const w = 900, h = 64;
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+
+  const dash = document.createElementNS(svgNS, "line");
+  dash.setAttribute("x1", 0); dash.setAttribute("y1", h/2);
+  dash.setAttribute("x2", w); dash.setAttribute("y2", h/2);
+  dash.setAttribute("class", "dash");
+  svg.appendChild(dash);
+
+  let d = `M 0 ${h-6}`;
+  const n = 60;
+  for (let i = 0; i <= n; i++) {
+    const x = (i/n) * w;
+    const t = (i/n - 0.5) * 10;
+    const y = h - 6 - (h - 12) / (1 + Math.exp(-t));
+    d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  const path = document.createElementNS(svgNS, "path");
+  path.setAttribute("d", d);
+  path.setAttribute("class", "curve");
+  svg.appendChild(path);
+
+  const dot = document.createElementNS(svgNS, "circle");
+  dot.setAttribute("cx", w/2); dot.setAttribute("cy", h/2);
+  dot.setAttribute("r", 5);
+  dot.setAttribute("class", "dot");
+  svg.appendChild(dot);
+
+  el.appendChild(svg);
+}
+drawThreshold("threshold-1");
+drawThreshold("threshold-2");
+drawThreshold("threshold-3");
+drawThreshold("threshold-4");
+</script>
+
+</body>
+</html>
