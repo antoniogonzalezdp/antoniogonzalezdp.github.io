@@ -366,6 +366,7 @@ footer a:hover { color: var(--petrol); }
   font-size: 13.5px;
   line-height: 1.6;
   margin: 20px 0;
+  white-space: pre-wrap;
 }
 .code-block .cm { color: #8FA6A0; }
 .code-label {

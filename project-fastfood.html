@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Designing a Fast-Food System in Python — Antonio González</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">antonio<b>·</b>gonzalez</a>
+  <div class="nav-links">
+    <a href="index.html#projects">Projects</a>
+    <a href="index.html#about">About</a>
+    <a href="mailto:antoniogdelpozo@gmail.com">Contact</a>
+  </div>
+</nav>
+
+<section class="detail-hero">
+  <a href="index.html#projects" class="back-link">← All projects</a>
+  <h1>Designing a Fast-Food System in <em>Python</em></h1>
+
+  <div class="meta-row">
+    <span class="pill">Python</span>
+    <span class="pill">OOP</span>
+    <span class="pill">pandas</span>
+    <span class="pill">CLI</span>
+  </div>
+
+  <div class="link-row">
+    <a href="https://github.com/antoniogonzalezdp/antoniogonzalezdp.github.io/tree/main/python-programming" target="_blank">💻 View the code on GitHub</a>
+  </div>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-1"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">Problem</div>
+  <h2>Turning spreadsheet rows into objects that know what they are</h2>
+  <p>Most real systems start out looking like a pile of spreadsheets: a list of cashiers, a list of customers, a handful of product catalogs. The design problem is what happens next — how do you turn each row into something that carries its own behavior, so the rest of the program never has to ask "wait, what kind of row is this?" This project is a small fast-food ordering system built to practice exactly that: reading six CSV files that stand in for a database, and modeling everything they contain — cashiers, customers, hamburgers, sodas, happy meals — as proper objects, built with abstract base classes, inheritance, and composition rather than a wall of if/elif statements.</p>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-2"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">Method</div>
+  <h2>Abstract base classes, not conditionals</h2>
+  <p>Every core concept — <code>Product</code>, <code>FoodPackage</code>, <code>User</code> — is defined as an abstract base class with the methods every subclass is required to implement. Concrete types then supply their own behavior: a <code>Hamburger</code> knows its own type and packages itself in a paper wrap, a <code>Soda</code> comes in a bottle, a <code>Cashier</code> and a <code>Customer</code> each describe themselves differently despite sharing a common <code>User</code> parent. Every object in the system can describe itself — no external code needs to know its internals to print it.</p>
+
+  <div class="code-label">Product is an abstract base class; each concrete type pairs itself with a FoodPackage</div>
+  <div class="code-block">class Product(ABC):
+    def __init__(self, id: str, name: str, price: float):
+        self.id = id
+        self.name = name
+        self.price = price
+
+    def describe(self):
+        return f"Product - Type: {self.type()}, Name: {self.name}, ...{self.foodPackage().describe()}."
+
+    <span class="cm"># every subclass must implement these two</span>
+    @abstractmethod
+    def type(self) -> str:
+        pass
+    @abstractmethod
+    def foodPackage(self) -> FoodPackage:
+        pass
+
+
+class Hamburger(Product):
+    def type(self) -> str:
+        return "Hamburger"
+    def foodPackage(self) -> FoodPackage:
+        return Wrapping()</div>
+
+  <h2 style="margin-top:48px;">From CSV rows to typed objects</h2>
+  <p>Six CSV files stand in for a database. A <code>CSVFileManager</code> loads each one into a pandas DataFrame, and a small hierarchy of <code>Converter</code> classes turns every row into the right kind of object — detecting a product's type straight from its id prefix. From that point on, nothing downstream ever touches a raw row again; the rest of the program only deals in real <code>Cashier</code>, <code>Customer</code>, and <code>Product</code> instances.</p>
+
+  <div class="pipeline" style="margin-top:28px;">
+    <div class="step">CSV file<br><span style="font-weight:400;color:var(--ink-soft);">6 files, one per entity</span></div><div class="arrow">→</div>
+    <div class="step">CSVFileManager<br><span style="font-weight:400;color:var(--ink-soft);">pandas DataFrame</span></div><div class="arrow">→</div>
+    <div class="step">Converter<br><span style="font-weight:400;color:var(--ink-soft);">row → object</span></div><div class="arrow">→</div>
+    <div class="step">Typed object<br><span style="font-weight:400;color:var(--ink-soft);">Cashier / Customer / Product</span></div>
+  </div>
+
+  <div class="code-label" style="margin-top:32px;">ProductConverter dispatches on the id prefix to build the right subclass</div>
+  <div class="code-block">for _, row in dataFrame.iterrows():
+    id, name, price = row["id"], row["name"], float(row["price"])
+
+    <span class="cm"># detect product type from the id prefix</span>
+    if id.startswith("HM"):
+        product = HappyMeal(id, name, price)
+    elif id.startswith("H"):
+        product = Hamburger(id, name, price)
+    elif id.startswith("G"):
+        product = Soda(id, name, price)
+    elif id.startswith("B"):
+        product = Drink(id, name, price)
+    else:
+        raise ValueError(f"Unknown product type for id '{id}'")
+
+    products.append(product)</div>
+</section>
+
+<div class="wrap"><div class="threshold" id="threshold-3"></div></div>
+
+<section class="detail-section">
+  <div class="section-label">In practice</div>
+  <h2>A cashier building a real order</h2>
+  <p>Putting it together end to end: a cashier and customer are looked up by DNI, products are added to the order one id at a time, and the order totals itself using nothing but the objects built by the pipeline above.</p>
+
+  <div class="code-label">Terminal session — trimmed for length</div>
+  <div class="code-block">$ python main.py
+Enter the cashier's DNI: 5001
+Enter the customer's DNI: 1001
+
+Available products:
+Product - Type: Hamburger, Name: Mc Bacon, Id: H1, Price: 10.8, ...
+Product - Type: Hamburger, Name: Super Delux, Id: H2, Price: 15.6, ...
+<span class="cm">... 15 more products ...</span>
+
+Enter product ID: H2
+Product 'Super Delux' added.
+Enter product ID: G4
+Product 'Sprite' added.
+Enter product ID: HM1
+Product 'Avengers' added.
+Enter product ID:
+
+Order summary:
+Hello : Customer - Name: Mike, DNI: 1001, Age: 37, Email: mike@uoc.edu, Postal Code: 28009
+Was attended by : Cashier - Name: Mia, DNI: 5001, Timetable: 09:00-15:00, Salary: 800.0.
+Product - Type: Hamburger, Name: Super Delux, Id: H2, Price: 15.6, ...
+Product - Type: Soda, Name: Sprite, Id: G4, Price: 1.0, ...
+Product - Type: HappyMeal, Name: Avengers, Id: HM1, Price: 5.5, ...
+Total price : 22.1</div>
+</section>
+
+<div class="impact-box">
+  <h2>Why this matters beyond the practice</h2>
+  <p>Turning raw rows — from a CSV, a database query, or an API request — into well-defined objects with clear responsibilities is one of the most common patterns in production backend code. The same shape shows up everywhere: an ORM converting database rows into model instances, a serializer converting a JSON payload into a typed object, a message consumer converting a queue payload into a domain event. Getting comfortable with abstraction, inheritance, and composition at this small scale is what makes that code readable at a much larger one.</p>
+</div>
+
+<footer>
+  <span>Barcelona, Spain</span>
+  <span>
+    <a href="mailto:antoniogdelpozo@gmail.com">antoniogdelpozo@gmail.com</a> ·
+    <a href="https://www.linkedin.com/in/antonio-gonzález-del-pozo-27b938291" target="_blank">LinkedIn</a> ·
+    <a href="https://github.com/" target="_blank">GitHub</a>
+  </span>
+</footer>
+
+<script>
+function drawThreshold(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const w = 900, h = 64;
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+
+  const dash = document.createElementNS(svgNS, "line");
+  dash.setAttribute("x1", 0); dash.setAttribute("y1", h/2);
+  dash.setAttribute("x2", w); dash.setAttribute("y2", h/2);
+  dash.setAttribute("class", "dash");
+  svg.appendChild(dash);
+
+  let d = `M 0 ${h-6}`;
+  const n = 60;
+  for (let i = 0; i <= n; i++) {
+    const x = (i/n) * w;
+    const t = (i/n - 0.5) * 10;
+    const y = h - 6 - (h - 12) / (1 + Math.exp(-t));
+    d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  const path = document.createElementNS(svgNS, "path");
+  path.setAttribute("d", d);
+  path.setAttribute("class", "curve");
+  svg.appendChild(path);
+
+  const dot = document.createElementNS(svgNS, "circle");
+  dot.setAttribute("cx", w/2); dot.setAttribute("cy", h/2);
+  dot.setAttribute("r", 5);
+  dot.setAttribute("class", "dot");
+  svg.appendChild(dot);
+
+  el.appendChild(svg);
+}
+drawThreshold("threshold-1");
+drawThreshold("threshold-2");
+drawThreshold("threshold-3");
+</script>
+
+</body>
+</html>
